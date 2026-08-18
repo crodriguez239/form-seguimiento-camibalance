@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Círculo Cami · Tema 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Mulish:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF5EE; --cream-deep:#F1E7DA; --espresso:#3B2A22;
+  --coral:#D9694E; --sage:#93A88B; --gold:#D2A24C; --muted:#7A675C;
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+body{
+  font-family:'Mulish',-apple-system,sans-serif; background:var(--cream); color:var(--espresso);
+  min-height:100vh; padding:22px 18px 40px; display:flex; justify-content:center;
+}
+.wrap{ width:100%; max-width:520px; }
+
+/* header */
+.top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
+.mark{ font-family:'Fraunces',serif; font-size:19px; font-weight:600; }
+.bolitas{ display:flex; gap:6px; }
+.bolita{ width:12px; height:12px; border-radius:50%; }
+.b1{background:var(--coral)} .b2{background:var(--gold)} .b3{background:var(--sage)}
+
+/* progress */
+.bar{ height:5px; background:var(--cream-deep); border-radius:99px; overflow:hidden; margin-bottom:8px; }
+.fill{ height:100%; background:var(--coral); width:20%; transition:width .35s ease; }
+.step-n{ font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:26px; }
+
+/* card */
+.q{ display:none; animation:in .3s ease; }
+.q.on{ display:block; }
+@keyframes in{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+h2{ font-family:'Fraunces',serif; font-size:26px; font-weight:600; line-height:1.22; letter-spacing:-.01em; }
+.hint{ font-size:15px; line-height:1.55; color:var(--muted); margin-top:12px; }
+
+input[type=text], input[type=number], textarea{
+  width:100%; font-family:'Mulish',sans-serif; font-size:17px; color:var(--espresso);
+  background:#fff; border:1.5px solid #E0D2C0; border-radius:10px;
+  padding:15px 16px; margin-top:16px; outline:none;
+}
+input:focus, textarea:focus{ border-color:var(--coral); }
+textarea{ min-height:110px; resize:vertical; line-height:1.5; }
+.lbl{ font-size:14px; font-weight:800; margin-top:20px; display:block; }
+.lbl:first-of-type{ margin-top:22px; }
+
+/* options */
+.opts{ margin-top:22px; display:flex; flex-direction:column; gap:11px; }
+.opt{
+  background:#fff; border:1.5px solid #E0D2C0; border-radius:12px;
+  padding:16px 17px; cursor:pointer; display:flex; gap:14px; align-items:flex-start;
+}
+.opt.sel{ border-color:var(--coral); background:#FDF2EE; }
+.opt > span:last-child{ flex:1; }
+.letter{
+  width:28px; height:28px; border-radius:50%; flex:0 0 28px; display:flex;
+  align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:13px; margin-top:1px;
+}
+.opt-t{ display:block; font-weight:800; font-size:16px; line-height:1.3; }
+.opt-d{ display:block; font-size:14px; color:var(--muted); line-height:1.45; margin-top:5px; }
+
+/* nav */
+.nav{ display:flex; gap:12px; margin-top:30px; }
+button{
+  font-family:'Mulish',sans-serif; font-size:16px; font-weight:800; border:none; border-radius:99px;
+  padding:16px 22px; cursor:pointer; flex:1;
+}
+.next{ background:var(--espresso); color:var(--cream); }
+.next:disabled{ background:#D8CBBC; color:#fff; }
+.back{ background:transparent; color:var(--muted); border:1.5px solid #E0D2C0; flex:0 0 92px; }
+.send{ background:var(--coral); color:#fff; }
+.note{ font-size:13px; color:var(--muted); text-align:center; margin-top:16px; line-height:1.5; }
+
+/* done */
+.done{ text-align:center; padding:34px 0 10px; display:none; }
+.done.on{ display:block; }
+.check{ width:62px; height:62px; border-radius:50%; background:var(--sage); margin:0 auto 22px;
+  display:flex; align-items:center; justify-content:center; color:#fff; font-size:30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <span class="mark">camibalance</span>
+    <span class="bolitas"><i class="bolita b1"></i><i class="bolita b2"></i><i class="bolita b3"></i></span>
+  </div>
+
+  <div id="form">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="step-n" id="stepn">Paso 1 de 5</div>
+
+    <!-- 1 -->
+    <div class="q" data-step="1">
+      <h2>Lo que se esconde</h2>
+      <p class="hint">Tres cosas rápidas para que yo vea dónde está tu hueco de verdad. Contesta con lo que de verdad haces, no con lo que sabes que deberías hacer. Esto es lo más útil que me puedes decir.</p>
+      <label class="lbl">Cuando cocinas, ¿cómo le echas el aceite?</label>
+      <div class="opts" id="aceite"></div>
+      <label class="lbl">¿Cuántos días de esta semana comiste fuera o pediste comida?</label>
+      <div class="opts" id="fuera"></div>
+    </div>
+
+    <!-- 2 -->
+    <div class="q" data-step="2">
+      <h2>Tus porciones</h2>
+      <p class="hint">Sin pensarlo mucho: ¿qué tan clara tienes la cantidad de lo que comes en un día normal?</p>
+      <div class="opts" id="claridad"></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="q" data-step="3">
+      <h2>¿Cuál es tu hueco?</h2>
+      <p class="hint">El del autodiagnóstico del documento. Escoge el que más se parezca a ti.</p>
+      <div class="opts">
+        <div class="opt" data-v="A — Como sano pero no sé cuánto">
+          <span class="letter" style="background:#3B2A22">A</span>
+          <span><span class="opt-t">Como sano pero no sé cuánto</span>
+          <span class="opt-d">Buena comida, pero las porciones son a ojo.</span></span>
+        </div>
+        <div class="opt" data-v="B — Cumplo de lunes a viernes">
+          <span class="letter" style="background:#D9694E">B</span>
+          <span><span class="opt-t">Cumplo de lunes a viernes</span>
+          <span class="opt-d">Entre semana bien, el fin de semana se me va.</span></span>
+        </div>
+        <div class="opt" data-v="C — Como muy poco y aun así no bajo">
+          <span class="letter" style="background:#93A88B">C</span>
+          <span><span class="opt-t">Como muy poco y aun así no bajo</span>
+          <span class="opt-d">Me salto comidas y llego con hambre a la noche.</span></span>
+        </div>
+        <div class="opt" data-v="No estoy segura">
+          <span class="letter" style="background:#D2A24C">?</span>
+          <span><span class="opt-t">No estoy segura</span>
+          <span class="opt-d">Me veo un poco en varias. Ayúdame a ubicarme.</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="back" id="back" style="display:none">Atrás</button>
+      <button class="next" id="next">Siguiente</button>
+    </div>
+    <p class="note" id="note"></p>
+  </div>
+
+  <div class="done" id="done">
+    <div class="check">✓</div>
+    <h2>¡Listo!</h2>
+    <p class="hint">Se abrió tu WhatsApp con las respuestas escritas. Solo dale enviar y me llega a mí.</p>
+    <div class="nav"><button class="send" id="again">Abrir WhatsApp otra vez</button></div>
+  </div>
+
+</div>
+
+<script>
+/* Número de WhatsApp de Cami (código de país + número, sin + ni espacios) */
+const WHATSAPP = "15615843042";
+
+const TEMA = "Tema 2 · Calorías y balance";
+const TOTAL = 3;
+let step = 1;
+const data = { aceite:"", fuera:"", claridad:"", hueco:"" };
+
+/* opciones simples */
+function llenar(id, arr){
+  const box = document.getElementById(id);
+  arr.forEach(t=>{
+    const d = document.createElement('div');
+    d.className = 'opt'; d.dataset.v = t;
+    d.innerHTML = '<span class="opt-t">'+t+'</span>';
+    box.appendChild(d);
+  });
+}
+llenar('aceite', ["Lo mido con cuchara","Un chorrito calculado","Un chorro sin medir","Uso spray o casi no uso"]);
+llenar('fuera', ["Ninguno","1 o 2 días","3 o 4 días","5 días o más"]);
+llenar('claridad', ["Muy clara, sé más o menos mi total","Más o menos, en algunas comidas","Poca, voy a ojo","Ninguna, nunca lo he mirado"]);
+
+document.addEventListener('click', e=>{
+  const o = e.target.closest('.opt');
+  if(!o) return;
+  o.parentElement.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+  o.classList.add('sel');
+  const grupo = o.parentElement.id;
+  if(grupo === 'aceite') data.aceite = o.dataset.v;
+  else if(grupo === 'fuera') data.fuera = o.dataset.v;
+  else if(grupo === 'claridad') data.claridad = o.dataset.v;
+  else data.hueco = o.dataset.v;
+  check();
+});
+
+function show(n){
+  document.querySelectorAll('.q').forEach(q=>q.classList.toggle('on', +q.dataset.step === n));
+  document.getElementById('fill').style.width = (n/TOTAL*100)+'%';
+  document.getElementById('stepn').textContent = 'Paso '+n+' de '+TOTAL;
+  document.getElementById('back').style.display = n>1 ? 'block' : 'none';
+  document.getElementById('next').textContent = n===TOTAL ? 'Enviarme las respuestas' : 'Siguiente';
+  document.getElementById('next').className = n===TOTAL ? 'send' : 'next';
+  document.getElementById('note').textContent = n===TOTAL ? 'Se abre tu WhatsApp con el mensaje listo. Solo le das enviar.' : '';
+  window.scrollTo({top:0, behavior:'smooth'});
+  check();
+}
+
+function check(){
+  const b = document.getElementById('next');
+  let ok = true;
+  if(step===1) ok = !!data.aceite && !!data.fuera;
+  if(step===2) ok = !!data.claridad;
+  if(step===3) ok = !!data.hueco;
+  b.disabled = !ok;
+}
+
+document.getElementById('next').addEventListener('click', ()=>{
+  if(step < TOTAL){ step++; show(step); }
+  else enviar();
+});
+document.getElementById('back').addEventListener('click', ()=>{ step--; show(step); });
+document.getElementById('again').addEventListener('click', enviar);
+
+function val(id){ return document.getElementById(id).value.trim(); }
+
+function armarMensaje(){
+  let m = "*CÍRCULO CAMI · " + TEMA + "*\n";
+  m += "———————————\n\n";
+  m += "*LO QUE SE ESCONDE*\n";
+  m += "• Aceite al cocinar: " + data.aceite + "\n";
+  m += "• Comió fuera esta semana: " + data.fuera + "\n";
+  m += "\n*CLARIDAD CON LAS PORCIONES:* " + data.claridad + "\n";
+  m += "\n*MI HUECO:* " + data.hueco + "\n";
+  m += "———————————";
+  return m;
+}
+
+function enviar(){
+  const url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(armarMensaje());
+  window.open(url, "_blank");
+  document.getElementById('form').style.display = 'none';
+  document.getElementById('done').classList.add('on');
+}
+
+show(1);
+</script>
+</body>
+</html>
