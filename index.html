@@ -215,7 +215,7 @@ input[type=range]::-moz-range-thumb{
     <div class="slider-row">
       <p class="scale-word" id="energiaWord">Normal</p>
       <input type="range" id="energia" min="1" max="5" value="3" step="1">
-      <div class="scale-ends"><span>Arrastrándome</span><span>Encendida</span></div>
+      <div class="scale-ends"><span>Sin fuerzas</span><span>Al 100</span></div>
     </div>
     <div class="mirror" id="energiaMirror"></div>
     <div class="body-space"></div>
@@ -301,8 +301,8 @@ input[type=range]::-moz-range-thumb{
   <!-- 10 · ESPEJO -->
   <section class="step" data-step="11">
     <p class="eyebrow">Tu semana</p>
-    <h2 id="espejoTitulo">Esto fue tuyo.</h2>
-    <p class="sub">Tómale captura. Cuando dudes de ti esta semana, léelo.</p>
+    <h2 id="espejoTitulo">Tu semana</h2>
+    <p class="sub" id="espejoSub"></p>
     <div class="espejo">
       <p class="tag">Constancia de la semana</p>
       <div class="score">
@@ -320,9 +320,11 @@ input[type=range]::-moz-range-thumb{
           <p class="say" id="outSay"></p>
         </div>
       </div>
-      <hr>
-      <p class="tag">Lo que lograste</p>
-      <p class="quote" id="outVictoria">—</p>
+      <div id="bloqueVictoria">
+        <hr>
+        <p class="tag" id="tagVictoria">Lo que lograste</p>
+        <p class="quote" id="outVictoria">—</p>
+      </div>
       <hr>
       <p class="tag">Tu foco de esta semana</p>
       <p class="foco" id="outCompromiso">—</p>
@@ -399,7 +401,7 @@ document.addEventListener("click", e=>{
 });
 
 /* --- devoluciones inmediatas --- */
-const orgulloWords = ["","Nada","Poquito","Regular","Casi","Ni fu ni fa","Algo","Bastante","Bien","Mucho","Muchísimo"];
+const orgulloWords = ["","Nada","Casi nada","Poco","Un poco","Más o menos","Algo","Bastante","Mucho","Muy orgullosa","Muchísimo"];
 const orgullo = document.getElementById("orgullo");
 orgullo.addEventListener("input", ()=>{
   const v = +orgullo.value;
@@ -417,7 +419,7 @@ function mirrorDias(){
   if(d===0) m.innerHTML = "Cero días es información, no un fracaso. Vamos a mirar qué se atravesó.";
   else if(d<=3) m.innerHTML = `<b>${d} de 7.</b> Menos de la mitad, pero no es cero — y eso se construye.`;
   else if(d<=5) m.innerHTML = `<b>${d} de 7.</b> Eso es mayoría. Así se ve la consistencia real, no la perfección.`;
-  else m.innerHTML = `<b>${d} de 7.</b> Semanaza. Guarda qué hiciste distinto, te lo voy a preguntar.`;
+  else m.innerHTML = `<b>${d} de 7.</b> Semana completa. Guarda qué hiciste distinto, te lo voy a preguntar.`;
 }
 function mirrorEnt(){
   const t=+D.tocaban, h=+D.hechos, m=document.getElementById("entMirror");
@@ -426,7 +428,7 @@ function mirrorEnt(){
   else if(h>=t) m.innerHTML = `<b>${h} de ${t}.</b> Completo. Eso es hacer lo que dijiste que ibas a hacer.`;
   else m.innerHTML = `<b>${h} de ${t}.</b> ${h} es más que 0. La consistencia no es perfección.`;
 }
-const energiaWords = ["","Arrastrándome","Baja","Normal","Buena","Encendida"];
+const energiaWords = ["","Sin fuerzas","Baja","Normal","Buena","Al 100"];
 const energia = document.getElementById("energia");
 energia.addEventListener("input", ()=>{
   const v=+energia.value;
@@ -487,10 +489,30 @@ function calcularScore(){
   return Math.round(comida + entreno + comp);
 }
 const BANDS = [
-  {min:85, name:"Semana sólida",     say:"Hiciste lo que dijiste que ibas a hacer. Eso es todo el secreto."},
-  {min:65, name:"Vas construyendo",  say:"La mayoría de la semana estuviste dentro. Así se ve el progreso real."},
-  {min:40, name:"Semana irregular",  say:"Hubo días buenos y días que no. Nombraste lo que se atravesó, y eso ya es material para trabajar."},
-  {min:0,  name:"Semana cuesta arriba", say:"Este número mide una semana, no a ti. Lo bueno es que se sube con decisiones, no con suerte."}
+  {min:85,
+   name:"Semana sólida",
+   say:"Hiciste lo que dijiste que ibas a hacer. Eso es todo el secreto.",
+   titulo:"Esto fue tuyo",
+   sub:"Tómale captura. Cuando dudes de ti esta semana, léelo.",
+   tagVic:"Lo que lograste"},
+  {min:65,
+   name:"Vas construyendo",
+   say:"La mayoría de la semana estuviste dentro. Así se ve el progreso real.",
+   titulo:"Así se ve construir",
+   sub:"Tómale captura. La semana que viene arranca desde aquí, no desde cero.",
+   tagVic:"Lo que lograste"},
+  {min:40,
+   name:"Semana irregular",
+   say:"Hubo días dentro y días fuera. Ya nombraste qué se atravesó, y con eso se trabaja.",
+   titulo:"Esta fue tu semana",
+   sub:"No todas salen. Esta ya pasó — lo que decide es lo que hagas con la que viene.",
+   tagVic:"Rescataste esto"},
+  {min:0,
+   name:"Semana cuesta arriba",
+   say:"Este número mide una semana, no mide quién eres. Sube con decisiones, no con suerte.",
+   titulo:"Semana registrada",
+   sub:"Sentarte a hacer este check-in en una semana así ya es no soltarlo. El lunes no arranca con culpa.",
+   tagVic:"Aun así, esto pasó"}
 ];
 
 function pintarScore(){
@@ -500,6 +522,14 @@ function pintarScore(){
   document.getElementById("outScore").textContent = s;
   document.getElementById("outBand").textContent = band.name;
   document.getElementById("outSay").textContent = band.say;
+
+  // la pantalla completa habla en el tono de la semana, no solo el número
+  document.getElementById("espejoTitulo").textContent =
+    D.nombre ? `${band.titulo}, ${D.nombre}.` : `${band.titulo}.`;
+  document.getElementById("espejoSub").textContent = band.sub;
+  document.getElementById("tagVictoria").textContent = band.tagVic;
+  document.getElementById("bloqueVictoria").style.display = D.victoria ? "block" : "none";
+  document.getElementById("outCompromiso").textContent = D.compromiso || "Todavía sin definir";
   const ring = document.getElementById("ringFill");
   ring.style.strokeDashoffset = 314.16;
   requestAnimationFrame(()=>{ ring.style.strokeDashoffset = 314.16 * (1 - s/100); });
@@ -518,8 +548,6 @@ function pintarScore(){
     el.style.display = "block";
     el.classList.add("down");
     el.textContent = "TU PUNTO DE PARTIDA";
-    document.getElementById("outSay").textContent =
-      "Este es tu número base. No hay contra qué compararlo todavía — el próximo domingo sí, y ahí es donde se pone bueno.";
   }
 }
 
@@ -531,7 +559,7 @@ function llenarEspejo(){
   D.momento = document.getElementById("momento").value.trim();
   D.victoria = document.getElementById("victoria").value.trim();
   D.compromiso = document.getElementById("compromiso").value.trim();
-  document.getElementById("espejoTitulo").textContent = D.nombre ? `Esto fue tuyo, ${D.nombre}.` : "Esto fue tuyo.";
+  document.getElementById("espejoTitulo").textContent = D.nombre ? `Tu semana, ${D.nombre}.` : "Tu semana.";
   document.getElementById("outVictoria").textContent = D.victoria || "—";
   document.getElementById("outCompromiso").textContent = D.compromiso || "—";
   document.getElementById("outDias").textContent = (D.dias??"—") + "/7";
