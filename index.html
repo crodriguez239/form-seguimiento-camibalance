@@ -1,246 +1,570 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Círculo Cami · Tema 2</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Check-in semanal · camibalance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Mulish:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --cream:#FAF5EE; --cream-deep:#F1E7DA; --espresso:#3B2A22;
-  --coral:#D9694E; --sage:#93A88B; --gold:#D2A24C; --muted:#7A675C;
+  --coral:#D9694E;
+  --cream:#FAF6F0;
+  --sage:#8FA08A;
+  --gold:#D9A441;
+  --espresso:#3A2E2A;
+  --espresso-soft:#7A6A63;
+  --line:#E6DCD1;
 }
-*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
 body{
-  font-family:'Mulish',-apple-system,sans-serif; background:var(--cream); color:var(--espresso);
-  min-height:100vh; padding:22px 18px 40px; display:flex; justify-content:center;
+  background:var(--cream);
+  color:var(--espresso);
+  font-family:'Mulish',system-ui,sans-serif;
+  font-size:17px;
+  line-height:1.5;
+  min-height:100dvh;
 }
-.wrap{ width:100%; max-width:520px; }
+.wrap{max-width:520px;margin:0 auto;padding:20px 22px 40px;min-height:100dvh;display:flex;flex-direction:column}
 
-/* header */
-.top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
-.mark{ font-family:'Fraunces',serif; font-size:19px; font-weight:600; }
-.bolitas{ display:flex; gap:6px; }
-.bolita{ width:12px; height:12px; border-radius:50%; }
-.b1{background:var(--coral)} .b2{background:var(--gold)} .b3{background:var(--sage)}
+/* ---- bolitas de progreso (sistema de marca) ---- */
+.bolitas{display:flex;gap:7px;align-items:center;padding:6px 0 22px}
+.bolita{width:9px;height:9px;border-radius:50%;background:#E6DCD1;transition:background .35s ease,transform .35s ease}
+.bolita.done{background:var(--coral)}
+.bolita.now{background:var(--coral);transform:scale(1.65)}
 
-/* progress */
-.bar{ height:5px; background:var(--cream-deep); border-radius:99px; overflow:hidden; margin-bottom:8px; }
-.fill{ height:100%; background:var(--coral); width:20%; transition:width .35s ease; }
-.step-n{ font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:26px; }
+/* ---- pasos ---- */
+.step{display:none;flex:1;flex-direction:column;animation:rise .4s ease both}
+.step.on{display:flex}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-/* card */
-.q{ display:none; animation:in .3s ease; }
-.q.on{ display:block; }
-@keyframes in{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
-h2{ font-family:'Fraunces',serif; font-size:26px; font-weight:600; line-height:1.22; letter-spacing:-.01em; }
-.hint{ font-size:15px; line-height:1.55; color:var(--muted); margin-top:12px; }
-
-input[type=text], input[type=number], textarea{
-  width:100%; font-family:'Mulish',sans-serif; font-size:17px; color:var(--espresso);
-  background:#fff; border:1.5px solid #E0D2C0; border-radius:10px;
-  padding:15px 16px; margin-top:16px; outline:none;
+.eyebrow{
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--espresso-soft);font-weight:700;margin:0 0 14px
 }
-input:focus, textarea:focus{ border-color:var(--coral); }
-textarea{ min-height:110px; resize:vertical; line-height:1.5; }
-.lbl{ font-size:14px; font-weight:800; margin-top:20px; display:block; }
-.lbl:first-of-type{ margin-top:22px; }
+h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em}
+h1{font-size:34px}
+h2{font-size:26px}
+.sub{color:var(--espresso-soft);font-size:15px;margin:0 0 26px}
+.body-space{flex:1}
 
-/* options */
-.opts{ margin-top:22px; display:flex; flex-direction:column; gap:11px; }
-.opt{
-  background:#fff; border:1.5px solid #E0D2C0; border-radius:12px;
-  padding:16px 17px; cursor:pointer; display:flex; gap:14px; align-items:flex-start;
+/* ---- inputs ---- */
+input[type=text],textarea{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;font-family:inherit;font-size:17px;color:var(--espresso);
+  transition:border-color .2s
 }
-.opt.sel{ border-color:var(--coral); background:#FDF2EE; }
-.opt > span:last-child{ flex:1; }
-.letter{
-  width:28px; height:28px; border-radius:50%; flex:0 0 28px; display:flex;
-  align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:13px; margin-top:1px;
+textarea{min-height:120px;resize:vertical}
+input:focus,textarea:focus{outline:none;border-color:var(--coral);box-shadow:0 0 0 3px rgba(217,105,78,.14)}
+label.field{display:block;font-weight:700;font-size:14px;margin:0 0 8px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{
+  border:1px solid var(--line);background:#fff;border-radius:999px;
+  padding:11px 17px;font-family:inherit;font-size:15px;color:var(--espresso);
+  cursor:pointer;transition:all .18s
 }
-.opt-t{ display:block; font-weight:800; font-size:16px; line-height:1.3; }
-.opt-d{ display:block; font-size:14px; color:var(--muted); line-height:1.45; margin-top:5px; }
+.chip:hover{border-color:var(--coral)}
+.chip[aria-pressed=true]{background:var(--espresso);border-color:var(--espresso);color:var(--cream)}
+.chip:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+.chips.num .chip{min-width:52px;text-align:center;padding:11px 0}
+
+/* slider */
+.slider-row{margin:6px 0 4px}
+input[type=range]{width:100%;-webkit-appearance:none;background:transparent;margin:12px 0}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:28px;height:28px;border-radius:50%;
+  background:var(--coral);border:3px solid var(--cream);margin-top:-12px;
+  box-shadow:0 2px 8px rgba(58,46,42,.22);cursor:grab
+}
+input[type=range]::-moz-range-thumb{
+  width:26px;height:26px;border-radius:50%;background:var(--coral);
+  border:3px solid var(--cream);cursor:grab
+}
+.scale-word{font-family:'Fraunces',serif;font-size:28px;font-weight:600;margin:2px 0 0}
+.scale-ends{display:flex;justify-content:space-between;font-size:12px;color:var(--espresso-soft);letter-spacing:.04em}
+
+/* devolución inmediata */
+.mirror{
+  border-left:3px solid var(--sage);padding:12px 0 12px 15px;margin:22px 0 0;
+  font-size:15px;color:var(--espresso);min-height:24px
+}
+.mirror:empty{display:none}
+.mirror b{font-weight:700}
 
 /* nav */
-.nav{ display:flex; gap:12px; margin-top:30px; }
-button{
-  font-family:'Mulish',sans-serif; font-size:16px; font-weight:800; border:none; border-radius:99px;
-  padding:16px 22px; cursor:pointer; flex:1;
+.nav{display:flex;gap:12px;align-items:center;padding-top:26px}
+.btn{
+  flex:1;background:var(--coral);color:#fff;border:none;border-radius:999px;
+  padding:16px 22px;font-family:inherit;font-size:17px;font-weight:700;
+  cursor:pointer;transition:transform .12s,opacity .2s
 }
-.next{ background:var(--espresso); color:var(--cream); }
-.next:disabled{ background:#D8CBBC; color:#fff; }
-.back{ background:transparent; color:var(--muted); border:1.5px solid #E0D2C0; flex:0 0 92px; }
-.send{ background:var(--coral); color:#fff; }
-.note{ font-size:13px; color:var(--muted); text-align:center; margin-top:16px; line-height:1.5; }
+.btn:active{transform:scale(.985)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.ghost{flex:0 0 auto;background:none;color:var(--espresso-soft);font-weight:600;padding:16px 4px}
+.btn:focus-visible{outline:2px solid var(--espresso);outline-offset:3px}
 
-/* done */
-.done{ text-align:center; padding:34px 0 10px; display:none; }
-.done.on{ display:block; }
-.check{ width:62px; height:62px; border-radius:50%; background:var(--sage); margin:0 auto 22px;
-  display:flex; align-items:center; justify-content:center; color:#fff; font-size:30px; }
+/* puntaje */
+.score{display:flex;align-items:center;gap:20px;margin:0 0 26px}
+.ring{position:relative;flex:0 0 116px;width:116px;height:116px}
+.ring svg{transform:rotate(-90deg)}
+.ring .track{fill:none;stroke:var(--line);stroke-width:9}
+.ring .fill{fill:none;stroke:var(--coral);stroke-width:9;stroke-linecap:round;
+  transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)}
+.ring .num{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:34px;font-weight:600
+}
+.score .band{font-family:'Fraunces',serif;font-size:22px;line-height:1.2;margin:0 0 6px}
+.score .delta{font-size:13px;font-weight:700;letter-spacing:.04em;margin:0 0 6px;color:var(--sage)}
+.score .delta.down{color:var(--espresso-soft)}
+.score .say{font-size:14px;color:var(--espresso-soft);margin:0;line-height:1.4}
+.score .tag{margin-bottom:10px}
+@media (max-width:400px){.score{gap:14px}.ring{flex-basis:96px;width:96px;height:96px}.ring .num{font-size:29px}}
+
+/* pantalla espejo */
+.espejo{background:#fff;border-radius:22px;padding:30px 26px;border:1px solid var(--line)}
+.espejo .tag{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--coral);font-weight:700;margin:0 0 8px}
+.espejo .quote{font-family:'Fraunces',serif;font-size:23px;line-height:1.3;margin:0 0 26px}
+.espejo hr{border:none;border-top:1px solid var(--line);margin:0 0 22px}
+.espejo .foco{font-family:'Fraunces',serif;font-size:23px;line-height:1.3;margin:0;color:var(--coral)}
+.stats{display:flex;gap:18px;margin:24px 0 0;padding-top:20px;border-top:1px solid var(--line)}
+.stat b{display:block;font-family:'Fraunces',serif;font-size:26px;font-weight:600;line-height:1}
+.stat span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--espresso-soft)}
+.foot{font-size:13px;color:var(--espresso-soft);text-align:center;margin:18px 0 0}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="top">
-    <span class="mark">camibalance</span>
-    <span class="bolitas"><i class="bolita b1"></i><i class="bolita b2"></i><i class="bolita b3"></i></span>
-  </div>
+  <div class="bolitas" id="bolitas" aria-hidden="true"></div>
 
-  <div id="form">
-    <div class="bar"><div class="fill" id="fill"></div></div>
-    <div class="step-n" id="stepn">Paso 1 de 5</div>
-
-    <!-- 1 -->
-    <div class="q" data-step="1">
-      <h2>Lo que se esconde</h2>
-      <p class="hint">Tres cosas rápidas para que yo vea dónde está tu hueco de verdad. Contesta con lo que de verdad haces, no con lo que sabes que deberías hacer. Esto es lo más útil que me puedes decir.</p>
-      <label class="lbl">Cuando cocinas, ¿cómo le echas el aceite?</label>
-      <div class="opts" id="aceite"></div>
-      <label class="lbl">¿Cuántos días de esta semana comiste fuera o pediste comida?</label>
-      <div class="opts" id="fuera"></div>
-    </div>
-
-    <!-- 2 -->
-    <div class="q" data-step="2">
-      <h2>Tus porciones</h2>
-      <p class="hint">Sin pensarlo mucho: ¿qué tan clara tienes la cantidad de lo que comes en un día normal?</p>
-      <div class="opts" id="claridad"></div>
-    </div>
-
-    <!-- 3 -->
-    <div class="q" data-step="3">
-      <h2>¿Cuál es tu hueco?</h2>
-      <p class="hint">El del autodiagnóstico del documento. Escoge el que más se parezca a ti.</p>
-      <div class="opts">
-        <div class="opt" data-v="A — Como sano pero no sé cuánto">
-          <span class="letter" style="background:#3B2A22">A</span>
-          <span><span class="opt-t">Como sano pero no sé cuánto</span>
-          <span class="opt-d">Buena comida, pero las porciones son a ojo.</span></span>
-        </div>
-        <div class="opt" data-v="B — Cumplo de lunes a viernes">
-          <span class="letter" style="background:#D9694E">B</span>
-          <span><span class="opt-t">Cumplo de lunes a viernes</span>
-          <span class="opt-d">Entre semana bien, el fin de semana se me va.</span></span>
-        </div>
-        <div class="opt" data-v="C — Como muy poco y aun así no bajo">
-          <span class="letter" style="background:#93A88B">C</span>
-          <span><span class="opt-t">Como muy poco y aun así no bajo</span>
-          <span class="opt-d">Me salto comidas y llego con hambre a la noche.</span></span>
-        </div>
-        <div class="opt" data-v="No estoy segura">
-          <span class="letter" style="background:#D2A24C">?</span>
-          <span><span class="opt-t">No estoy segura</span>
-          <span class="opt-d">Me veo un poco en varias. Ayúdame a ubicarme.</span></span>
-        </div>
+  <!-- 0 · ENTRADA -->
+  <section class="step on" data-step="0">
+    <p class="eyebrow">Check-in semanal</p>
+    <h1>Dos minutos contigo.</h1>
+    <p class="sub">Esto no es un examen. Es tu espejo de la semana. Contesta rápido y con la verdad — la verdad es la única que sirve.</p>
+    <label class="field" for="nombre">¿Cómo te llamas?</label>
+    <input type="text" id="nombre" autocomplete="given-name" placeholder="Tu nombre">
+    <div id="previoBox" style="display:none;margin-top:28px">
+      <div class="mirror" style="border-color:var(--gold)">
+        La semana pasada te comprometiste a: <b id="previoTxt"></b>
+      </div>
+      <p class="field" style="margin:18px 0 8px">¿Lo lograste?</p>
+      <div class="chips" data-single="previo">
+        <button class="chip" type="button" data-v="Sí, lo cumplí">Sí</button>
+        <button class="chip" type="button" data-v="A medias">A medias</button>
+        <button class="chip" type="button" data-v="No, esta semana no">No</button>
       </div>
     </div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn" type="button" data-next>Empezar</button></div>
+  </section>
 
-    <div class="nav">
-      <button class="back" id="back" style="display:none">Atrás</button>
-      <button class="next" id="next">Siguiente</button>
+  <!-- 1 · ORGULLO -->
+  <section class="step" data-step="1">
+    <p class="eyebrow">01 · Lo primero</p>
+    <h2>¿Qué tan orgullosa te sientes de tu semana?</h2>
+    <p class="sub">Sin justificarte todavía. Lo primero que te salga.</p>
+    <div class="slider-row">
+      <p class="scale-word" id="orgulloWord">Ni fu ni fa</p>
+      <input type="range" id="orgullo" min="1" max="10" value="5" step="1">
+      <div class="scale-ends"><span>Nada</span><span>Muchísimo</span></div>
     </div>
-    <p class="note" id="note"></p>
-  </div>
+    <div class="mirror" id="orgulloMirror"></div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
 
-  <div class="done" id="done">
-    <div class="check">✓</div>
-    <h2>¡Listo!</h2>
-    <p class="hint">Se abrió tu WhatsApp con las respuestas escritas. Solo dale enviar y me llega a mí.</p>
-    <div class="nav"><button class="send" id="again">Abrir WhatsApp otra vez</button></div>
-  </div>
+  <!-- 2 · CANTIDADES -->
+  <section class="step" data-step="2">
+    <p class="eyebrow">02 · Comida</p>
+    <h2>¿Cuántos días cumpliste tus cantidades?</h2>
+    <p class="sub">De 7. Cuenta los días que te sentiste dentro de tu plan, no los perfectos.</p>
+    <div class="chips num" data-single="dias" id="diasChips"></div>
+    <div class="mirror" id="diasMirror"></div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 3 · ENTRENAMIENTOS -->
+  <section class="step" data-step="3">
+    <p class="eyebrow">03 · Entrenamiento</p>
+    <h2>Tus entrenamientos.</h2>
+    <p class="field" style="margin:18px 0 8px">¿Cuántos tocaban esta semana?</p>
+    <div class="chips num" data-single="tocaban" id="tocabanChips"></div>
+    <p class="field" style="margin:26px 0 8px">¿Cuántos hiciste?</p>
+    <div class="chips num" data-single="hechos" id="hechosChips"></div>
+    <div class="mirror" id="entMirror"></div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 4 · ENERGÍA -->
+  <section class="step" data-step="4">
+    <p class="eyebrow">04 · Cómo andas</p>
+    <h2>¿Cómo estuvo tu energía?</h2>
+    <p class="sub">En promedio, durante el día.</p>
+    <div class="slider-row">
+      <p class="scale-word" id="energiaWord">Normal</p>
+      <input type="range" id="energia" min="1" max="5" value="3" step="1">
+      <div class="scale-ends"><span>Arrastrándome</span><span>Encendida</span></div>
+    </div>
+    <div class="mirror" id="energiaMirror"></div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 5A · RAMA BAJA -->
+  <section class="step" data-step="5">
+    <p class="eyebrow">05 · Vamos a nombrarlo</p>
+    <h2>¿Qué lo hizo difícil?</h2>
+    <p class="sub">Marca todo lo que aplique. Esto no es para regañarte, es para arreglarlo.</p>
+    <div class="chips" data-multi="obstaculos">
+      <button class="chip" type="button" data-v="Tiempo">Tiempo</button>
+      <button class="chip" type="button" data-v="Antojos">Antojos</button>
+      <button class="chip" type="button" data-v="Comí fuera">Comí fuera</button>
+      <button class="chip" type="button" data-v="Ánimo bajo">Ánimo bajo</button>
+      <button class="chip" type="button" data-v="No me gustó la comida">No me gustó la comida</button>
+      <button class="chip" type="button" data-v="Actividad social">Actividad social</button>
+      <button class="chip" type="button" data-v="Se me olvidó">Se me olvidó</button>
+      <button class="chip" type="button" data-v="Cansancio">Cansancio</button>
+    </div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 5B · RAMA ALTA -->
+  <section class="step" data-step="6">
+    <p class="eyebrow">05 · Guarda esto</p>
+    <h2>¿Qué hiciste diferente esta semana?</h2>
+    <p class="sub">Algo funcionó. Escríbelo con nombre y apellido para que lo puedas repetir.</p>
+    <textarea id="diferente" placeholder="Dejé la comida lista los domingos, entrené temprano, avisé en la casa que…"></textarea>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 6 · MOMENTO DIFÍCIL -->
+  <section class="step" data-step="7">
+    <p class="eyebrow">06 · El momento</p>
+    <h2>¿Cuál fue el momento exacto donde se te hizo cuesta arriba?</h2>
+    <p class="sub">El día, la hora, dónde estabas. Mientras más específica, más puedo ayudarte.</p>
+    <textarea id="momento" placeholder="El jueves como a las 9 de la noche, después de llegar del trabajo…"></textarea>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 7 · VICTORIA -->
+  <section class="step" data-step="8">
+    <p class="eyebrow">07 · Léelo dos veces</p>
+    <h2>Nombra una cosa que hiciste esta semana que tú de hace dos meses no hubiera hecho.</h2>
+    <p class="sub">Aunque te parezca pequeña. Sobre todo si te parece pequeña.</p>
+    <textarea id="victoria" placeholder="Pedí el pollo a la plancha aunque todo el mundo pidió frito…"></textarea>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 8 · QUÉ NECESITAS -->
+  <section class="step" data-step="9">
+    <p class="eyebrow">08 · Tu turno de pedir</p>
+    <h2>¿Qué necesitas de mí esta semana?</h2>
+    <p class="sub">Marca todo lo que aplique. Se vale pedir menos exigencia. También se vale decir que vas bien.</p>
+    <div class="chips" data-multi="necesita">
+      <button class="chip" type="button" data-v="Más estructura">Más estructura</button>
+      <button class="chip" type="button" data-v="Más recetas / ideas">Más recetas</button>
+      <button class="chip" type="button" data-v="Que la empuje">Que me empujes</button>
+      <button class="chip" type="button" data-v="Que le baje la exigencia">Bájame la exigencia</button>
+      <button class="chip" type="button" data-v="Que le explique algo">Explícame algo</button>
+      <button class="chip" type="button" data-v="Nada, va bien" data-excl="1">Nada, voy bien</button>
+    </div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Seguir</button></div>
+  </section>
+
+  <!-- 9 · COMPROMISO -->
+  <section class="step" data-step="10">
+    <p class="eyebrow">09 · Una sola</p>
+    <h2>¿Cuál es tu foco para esta semana?</h2>
+    <p class="sub">Una cosa. Concreta y chiquita. La próxima semana te la voy a recordar aquí mismo.</p>
+    <textarea id="compromiso" placeholder="Desayunar proteína todos los días antes de salir"></textarea>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" data-next>Ver mi semana</button></div>
+  </section>
+
+  <!-- 10 · ESPEJO -->
+  <section class="step" data-step="11">
+    <p class="eyebrow">Tu semana</p>
+    <h2 id="espejoTitulo">Esto fue tuyo.</h2>
+    <p class="sub">Tómale captura. Cuando dudes de ti esta semana, léelo.</p>
+    <div class="espejo">
+      <p class="tag">Constancia de la semana</p>
+      <div class="score">
+        <div class="ring">
+          <svg width="116" height="116" viewBox="0 0 116 116">
+            <circle class="track" cx="58" cy="58" r="50"></circle>
+            <circle class="fill" id="ringFill" cx="58" cy="58" r="50"
+              stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+          </svg>
+          <div class="num" id="outScore">—</div>
+        </div>
+        <div>
+          <p class="band" id="outBand">—</p>
+          <p class="delta" id="outDelta" style="display:none"></p>
+          <p class="say" id="outSay"></p>
+        </div>
+      </div>
+      <hr>
+      <p class="tag">Lo que lograste</p>
+      <p class="quote" id="outVictoria">—</p>
+      <hr>
+      <p class="tag">Tu foco de esta semana</p>
+      <p class="foco" id="outCompromiso">—</p>
+      <div class="stats">
+        <div class="stat"><b id="outDias">—</b><span>días en plan</span></div>
+        <div class="stat"><b id="outEnt">—</b><span>entrenos</span></div>
+        <div class="stat"><b id="outEnergia">—</b><span>energía</span></div>
+      </div>
+    </div>
+    <div class="body-space"></div>
+    <div class="nav"><button class="btn ghost" type="button" data-back>Atrás</button><button class="btn" type="button" id="enviar">Enviar a Cami</button></div>
+    <p class="foot">camibalance · check-in semanal</p>
+  </section>
 
 </div>
 
 <script>
-/* Número de WhatsApp de Cami (código de país + número, sin + ni espacios) */
-const WHATSAPP = "15615843042";
+/* ====== CONFIGURA AQUÍ ====== */
+const WHATSAPP = "18095551234"; // <-- pon tu número con código de país, sin + ni espacios
+/* ============================ */
 
-const TEMA = "Tema 2 · Calorías y balance";
-const TOTAL = 3;
-let step = 1;
-const data = { aceite:"", fuera:"", claridad:"", hueco:"" };
+const D = {previo:"", obstaculos:[], necesita:[]};
+let paso = 0, ruta = [];
 
-/* opciones simples */
-function llenar(id, arr){
-  const box = document.getElementById(id);
-  arr.forEach(t=>{
-    const d = document.createElement('div');
-    d.className = 'opt'; d.dataset.v = t;
-    d.innerHTML = '<span class="opt-t">'+t+'</span>';
-    box.appendChild(d);
+/* --- memoria del compromiso anterior --- */
+let previo = null;
+try { previo = localStorage.getItem("cb_compromiso"); } catch(e){}
+if (previo) {
+  document.getElementById("previoTxt").textContent = previo;
+  document.getElementById("previoBox").style.display = "block";
+}
+try {
+  const n = localStorage.getItem("cb_nombre");
+  if (n) document.getElementById("nombre").value = n;
+} catch(e){}
+
+/* --- chips numéricas --- */
+function llenar(id, max, key){
+  const c = document.getElementById(id);
+  for (let i=0;i<=max;i++){
+    const b = document.createElement("button");
+    b.type="button"; b.className="chip"; b.dataset.v=i; b.textContent=i;
+    c.appendChild(b);
+  }
+  c.dataset.single = key;
+}
+llenar("diasChips",7,"dias");
+llenar("tocabanChips",7,"tocaban");
+llenar("hechosChips",7,"hechos");
+
+/* --- lógica de chips --- */
+document.addEventListener("click", e=>{
+  const chip = e.target.closest(".chip");
+  if(!chip) return;
+  const cont = chip.parentElement;
+  if(cont.dataset.single){
+    [...cont.children].forEach(c=>c.setAttribute("aria-pressed","false"));
+    chip.setAttribute("aria-pressed","true");
+    D[cont.dataset.single] = chip.dataset.v;
+    if(cont.dataset.single==="dias") mirrorDias();
+    if(cont.dataset.single==="tocaban"||cont.dataset.single==="hechos") mirrorEnt();
+  } else if(cont.dataset.multi){
+    const on = chip.getAttribute("aria-pressed")==="true";
+    chip.setAttribute("aria-pressed", on?"false":"true");
+    // "Nada, va bien" no convive con las demás
+    if(chip.dataset.excl && !on){
+      [...cont.children].forEach(c=>{ if(c!==chip) c.setAttribute("aria-pressed","false"); });
+    } else if(!on){
+      [...cont.children].forEach(c=>{ if(c.dataset.excl) c.setAttribute("aria-pressed","false"); });
+    }
+    const k = cont.dataset.multi;
+    D[k] = [...cont.children].filter(c=>c.getAttribute("aria-pressed")==="true").map(c=>c.dataset.v);
+  }
+});
+
+/* --- devoluciones inmediatas --- */
+const orgulloWords = ["","Nada","Poquito","Regular","Casi","Ni fu ni fa","Algo","Bastante","Bien","Mucho","Muchísimo"];
+const orgullo = document.getElementById("orgullo");
+orgullo.addEventListener("input", ()=>{
+  const v = +orgullo.value;
+  document.getElementById("orgulloWord").textContent = orgulloWords[v];
+  const m = document.getElementById("orgulloMirror");
+  if(v<=3) m.innerHTML = "Gracias por ser honesta. Un número bajo aquí no dice quién eres, dice cómo estuvo <b>esta</b> semana.";
+  else if(v<=6) m.innerHTML = "Una semana normal también cuenta. Lo que sostiene el cambio son las semanas normales, no las perfectas.";
+  else m.innerHTML = "Recuérdalo cuando venga una semana floja. Esto también eres tú.";
+});
+orgullo.dispatchEvent(new Event("input"));
+
+function mirrorDias(){
+  const d = +D.dias, m = document.getElementById("diasMirror");
+  if(isNaN(d)) return;
+  if(d===0) m.innerHTML = "Cero días es información, no un fracaso. Vamos a mirar qué se atravesó.";
+  else if(d<=3) m.innerHTML = `<b>${d} de 7.</b> Menos de la mitad, pero no es cero — y eso se construye.`;
+  else if(d<=5) m.innerHTML = `<b>${d} de 7.</b> Eso es mayoría. Así se ve la consistencia real, no la perfección.`;
+  else m.innerHTML = `<b>${d} de 7.</b> Semanaza. Guarda qué hiciste distinto, te lo voy a preguntar.`;
+}
+function mirrorEnt(){
+  const t=+D.tocaban, h=+D.hechos, m=document.getElementById("entMirror");
+  if(isNaN(t)||isNaN(h)) return;
+  if(h===0) m.innerHTML = "Cero entrenos. Pasa. Lo importante es que el lunes no arranque con culpa.";
+  else if(h>=t) m.innerHTML = `<b>${h} de ${t}.</b> Completo. Eso es hacer lo que dijiste que ibas a hacer.`;
+  else m.innerHTML = `<b>${h} de ${t}.</b> ${h} es más que 0. La consistencia no es perfección.`;
+}
+const energiaWords = ["","Arrastrándome","Baja","Normal","Buena","Encendida"];
+const energia = document.getElementById("energia");
+energia.addEventListener("input", ()=>{
+  const v=+energia.value;
+  document.getElementById("energiaWord").textContent = energiaWords[v];
+  const m = document.getElementById("energiaMirror");
+  if(v<=2) m.innerHTML = "La energía baja casi siempre tiene explicación — comida, carga o descanso. Anótalo, lo revisamos.";
+  else m.innerHTML = "";
+});
+energia.dispatchEvent(new Event("input"));
+
+/* --- navegación con ramificación --- */
+function calcularRuta(){
+  const d = +D.dias, t = +D.tocaban, h = +D.hechos;
+  const flojo = (isNaN(d)?0:d) <= 4 || (t>0 && h/t < 0.6);
+  ruta = [0,1,2,3,4, flojo?5:6, 7,8,9,10,11];
+}
+calcularRuta();
+
+function pintar(){
+  document.querySelectorAll(".step").forEach(s=>s.classList.remove("on"));
+  document.querySelector(`.step[data-step="${ruta[paso]}"]`).classList.add("on");
+  const b = document.getElementById("bolitas");
+  b.innerHTML = "";
+  ruta.forEach((_,i)=>{
+    const el=document.createElement("div");
+    el.className = "bolita" + (i<paso?" done":i===paso?" now":"");
+    b.appendChild(el);
   });
+  window.scrollTo({top:0,behavior:"instant"});
 }
-llenar('aceite', ["Lo mido con cuchara","Un chorrito calculado","Un chorro sin medir","Uso spray o casi no uso"]);
-llenar('fuera', ["Ninguno","1 o 2 días","3 o 4 días","5 días o más"]);
-llenar('claridad', ["Muy clara, sé más o menos mi total","Más o menos, en algunas comidas","Poca, voy a ojo","Ninguna, nunca lo he mirado"]);
 
-document.addEventListener('click', e=>{
-  const o = e.target.closest('.opt');
-  if(!o) return;
-  o.parentElement.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
-  o.classList.add('sel');
-  const grupo = o.parentElement.id;
-  if(grupo === 'aceite') data.aceite = o.dataset.v;
-  else if(grupo === 'fuera') data.fuera = o.dataset.v;
-  else if(grupo === 'claridad') data.claridad = o.dataset.v;
-  else data.hueco = o.dataset.v;
-  check();
+document.querySelectorAll("[data-next]").forEach(btn=>btn.addEventListener("click",()=>{
+  if(paso===0){
+    D.nombre = document.getElementById("nombre").value.trim();
+    if(!D.nombre){ document.getElementById("nombre").focus(); return; }
+    try{ localStorage.setItem("cb_nombre", D.nombre); }catch(e){}
+  }
+  if(ruta[paso]===4) calcularRuta();
+  if(ruta[paso]===10) llenarEspejo();
+  if(paso < ruta.length-1){ paso++; pintar(); }
+}));
+document.querySelectorAll("[data-back]").forEach(btn=>btn.addEventListener("click",()=>{
+  if(paso>0){ paso--; pintar(); }
+}));
+
+/* --- puntaje de constancia: solo lo que ella controla --- */
+function calcularScore(){
+  const d = isNaN(+D.dias)?0:+D.dias;
+  const t = isNaN(+D.tocaban)?0:+D.tocaban;
+  const h = isNaN(+D.hechos)?0:+D.hechos;
+  let pesos = {comida:50, entreno:35, compromiso:15};
+  if(!previo) pesos = {comida:60, entreno:40, compromiso:0};      // primera semana
+  if(t===0){ pesos.comida += pesos.entreno; pesos.entreno = 0; }  // semana sin entrenos pautados
+  const comida  = (d/7) * pesos.comida;
+  const entreno = t>0 ? Math.min(h/t,1) * pesos.entreno : 0;
+  const c = D.previo==="Sí, lo cumplí" ? 1 : D.previo==="A medias" ? .5 : 0;
+  const comp = c * pesos.compromiso;
+  return Math.round(comida + entreno + comp);
+}
+const BANDS = [
+  {min:85, name:"Semana sólida",     say:"Hiciste lo que dijiste que ibas a hacer. Eso es todo el secreto."},
+  {min:65, name:"Vas construyendo",  say:"La mayoría de la semana estuviste dentro. Así se ve el progreso real."},
+  {min:40, name:"Semana irregular",  say:"Hubo días buenos y días que no. Nombraste lo que se atravesó, y eso ya es material para trabajar."},
+  {min:0,  name:"Semana cuesta arriba", say:"Este número mide una semana, no a ti. Lo bueno es que se sube con decisiones, no con suerte."}
+];
+
+function pintarScore(){
+  const s = calcularScore();
+  D.score = s;
+  const band = BANDS.find(b=>s>=b.min);
+  document.getElementById("outScore").textContent = s;
+  document.getElementById("outBand").textContent = band.name;
+  document.getElementById("outSay").textContent = band.say;
+  const ring = document.getElementById("ringFill");
+  ring.style.strokeDashoffset = 314.16;
+  requestAnimationFrame(()=>{ ring.style.strokeDashoffset = 314.16 * (1 - s/100); });
+
+  const el = document.getElementById("outDelta");
+  let prev = null;
+  try{ prev = localStorage.getItem("cb_score"); }catch(e){}
+  if(prev !== null && prev !== ""){
+    const dif = s - (+prev);
+    el.style.display = "block";
+    el.classList.toggle("down", dif < 0);
+    if(dif > 0) el.textContent = `▲ ${dif} PUNTOS MÁS QUE LA SEMANA PASADA`;
+    else if(dif < 0) el.textContent = `${Math.abs(dif)} puntos menos que la semana pasada (${prev} → ${s})`;
+    else el.textContent = `IGUAL QUE LA SEMANA PASADA · ${s}`;
+  } else {
+    el.style.display = "block";
+    el.classList.add("down");
+    el.textContent = "TU PUNTO DE PARTIDA";
+    document.getElementById("outSay").textContent =
+      "Este es tu número base. No hay contra qué compararlo todavía — el próximo domingo sí, y ahí es donde se pone bueno.";
+  }
+}
+
+/* --- pantalla espejo --- */
+function llenarEspejo(){
+  D.orgullo = orgullo.value;
+  D.energia = energia.value;
+  D.diferente = document.getElementById("diferente").value.trim();
+  D.momento = document.getElementById("momento").value.trim();
+  D.victoria = document.getElementById("victoria").value.trim();
+  D.compromiso = document.getElementById("compromiso").value.trim();
+  document.getElementById("espejoTitulo").textContent = D.nombre ? `Esto fue tuyo, ${D.nombre}.` : "Esto fue tuyo.";
+  document.getElementById("outVictoria").textContent = D.victoria || "—";
+  document.getElementById("outCompromiso").textContent = D.compromiso || "—";
+  document.getElementById("outDias").textContent = (D.dias??"—") + "/7";
+  document.getElementById("outEnt").textContent = (D.hechos??"—") + "/" + (D.tocaban??"—");
+  document.getElementById("outEnergia").textContent = energiaWords[+D.energia];
+  pintarScore();
+}
+
+/* --- enviar a WhatsApp --- */
+document.getElementById("enviar").addEventListener("click", ()=>{
+  llenarEspejo();
+  try{
+    if(D.compromiso) localStorage.setItem("cb_compromiso", D.compromiso);
+    localStorage.setItem("cb_score", String(D.score));
+  }catch(e){}
+  const f = new Date().toLocaleDateString("es-DO",{day:"2-digit",month:"short"});
+  let t = `*CHECK-IN SEMANAL · ${D.nombre||""}*\n${f}\n\n`;
+  t += `*Constancia:* ${D.score}/100 — ${BANDS.find(b=>D.score>=b.min).name}\n`;
+  if(previo) t += `*Compromiso anterior:* ${previo}\n*¿Lo logró?* ${D.previo||"—"}\n\n`;
+  t += `*Orgullo:* ${D.orgullo}/10 (${orgulloWords[+D.orgullo]})\n`;
+  t += `*Cantidades:* ${D.dias??"—"}/7 días\n`;
+  t += `*Entrenamientos:* ${D.hechos??"—"} de ${D.tocaban??"—"}\n`;
+  t += `*Energía:* ${energiaWords[+D.energia]}\n\n`;
+  if(D.obstaculos.length) t += `*Qué lo hizo difícil:* ${D.obstaculos.join(", ")}\n\n`;
+  if(D.diferente) t += `*Qué hizo diferente:*\n${D.diferente}\n\n`;
+  if(D.momento) t += `*Momento cuesta arriba:*\n${D.momento}\n\n`;
+  if(D.victoria) t += `*Su victoria:*\n${D.victoria}\n\n`;
+  t += `*Qué necesita:* ${D.necesita.length?D.necesita.join(", "):"—"}\n\n`;
+  t += `*Foco de la semana:*\n${D.compromiso||"—"}`;
+  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t)}`,"_blank");
 });
 
-function show(n){
-  document.querySelectorAll('.q').forEach(q=>q.classList.toggle('on', +q.dataset.step === n));
-  document.getElementById('fill').style.width = (n/TOTAL*100)+'%';
-  document.getElementById('stepn').textContent = 'Paso '+n+' de '+TOTAL;
-  document.getElementById('back').style.display = n>1 ? 'block' : 'none';
-  document.getElementById('next').textContent = n===TOTAL ? 'Enviarme las respuestas' : 'Siguiente';
-  document.getElementById('next').className = n===TOTAL ? 'send' : 'next';
-  document.getElementById('note').textContent = n===TOTAL ? 'Se abre tu WhatsApp con el mensaje listo. Solo le das enviar.' : '';
-  window.scrollTo({top:0, behavior:'smooth'});
-  check();
-}
-
-function check(){
-  const b = document.getElementById('next');
-  let ok = true;
-  if(step===1) ok = !!data.aceite && !!data.fuera;
-  if(step===2) ok = !!data.claridad;
-  if(step===3) ok = !!data.hueco;
-  b.disabled = !ok;
-}
-
-document.getElementById('next').addEventListener('click', ()=>{
-  if(step < TOTAL){ step++; show(step); }
-  else enviar();
-});
-document.getElementById('back').addEventListener('click', ()=>{ step--; show(step); });
-document.getElementById('again').addEventListener('click', enviar);
-
-function val(id){ return document.getElementById(id).value.trim(); }
-
-function armarMensaje(){
-  let m = "*CÍRCULO CAMI · " + TEMA + "*\n";
-  m += "———————————\n\n";
-  m += "*LO QUE SE ESCONDE*\n";
-  m += "• Aceite al cocinar: " + data.aceite + "\n";
-  m += "• Comió fuera esta semana: " + data.fuera + "\n";
-  m += "\n*CLARIDAD CON LAS PORCIONES:* " + data.claridad + "\n";
-  m += "\n*MI HUECO:* " + data.hueco + "\n";
-  m += "———————————";
-  return m;
-}
-
-function enviar(){
-  const url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(armarMensaje());
-  window.open(url, "_blank");
-  document.getElementById('form').style.display = 'none';
-  document.getElementById('done').classList.add('on');
-}
-
-show(1);
+pintar();
 </script>
 </body>
 </html>
